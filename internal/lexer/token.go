@@ -1,6 +1,8 @@
 package lexer
 
-import "fmt"
+import (
+	"fmt"
+)
 
 const (
     TokenIf                 = "IF"
@@ -41,13 +43,16 @@ type Token struct {
 	Value string
 }
 
-func NewToken(tokenType, value string) *Token {
-	tokenType = tokens[tokenType]
+func NewToken(tokenType, value string) (*Token, error) {
+	tokenType, exists := tokens[tokenType]
+	if !exists {
+        return nil, fmt.Errorf("unknown token type: %s", tokenType)
+	}
 
 	return &Token{
 		Type:  tokenType,
 		Value: value,
-	}
+	}, nil
 }
 
 func (t *Token) String() string {
