@@ -7,15 +7,23 @@ import (
 )
 
 func TestNewToken(t *testing.T) {
-	token, err := NewToken("id", "test")
+	token, err := NewToken(TokenIdent, "test")
 
 	assert.Nil(t, err)
 	assert.Equal(t, token.Type, TokenIdent)
+	assert.Equal(t, token.Value, "test")
 }
 
-func TestNewTokenInvalidType(t *testing.T) {
-	token, err := NewToken("invalid", "test")
+func TestIsKeywordValid(t *testing.T) {
+	assert.True(t, IsKeyword("fn"))
+	assert.True(t, IsKeyword("if"))
+	assert.True(t, IsKeyword("else"))
+	assert.True(t, IsKeyword("return"))
+}
 
-	assert.Error(t, err, "invalid token type: invalid")
-	assert.Nil(t, token)
+func TestIsKeywordInvalid(t *testing.T) {
+	assert.False(t, IsKeyword("test"))
+	assert.False(t, IsKeyword("fi"))
+	assert.False(t, IsKeyword("esle"))
+	assert.False(t, IsKeyword("foo"))
 }
