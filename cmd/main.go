@@ -1,7 +1,7 @@
 package main
-
 import (
 	"flag"
+	"fmt"
 	"log"
 	"os"
 
@@ -30,6 +30,11 @@ func main() {
 
 	st := symboltable.New()
 	parser := parser.NewDescendingParser(tokens, st)
-	
 	parser.Parse()
+
+    fmt.Println("Symbol Table:")
+    for k, v := range st {
+        fmt.Printf("%s: %v\n", k, v)
+    }
+
 }

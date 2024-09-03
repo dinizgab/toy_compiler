@@ -24,3 +24,4 @@ func (s SymbolTable) LookUp(name string) (SymbolInformation, bool) {
 
 	return entry, found
 }
+

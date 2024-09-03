@@ -23,6 +23,6 @@ func (p *ascendingParserImpl) Parse() error {
     return nil
 }
 
-func (p *ascendingParserImpl) Match(t *token.Token) bool {
-	return p.Lookahead != nil && p.Lookahead.Type == t.Type && p.Lookahead.Value == t.Value
+func (p *ascendingParserImpl) Match(t string) bool {
+	return p.Lookahead != nil && p.Lookahead.Type == t
 }

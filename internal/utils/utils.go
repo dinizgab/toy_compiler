@@ -1,5 +1,7 @@
 package utils
 
+import "github.com/dinizgab/toy_compiler/internal/token"
+
 func IsAlpha(char byte) bool {
 	return (char >= 'a' && char <= 'z') || (char >= 'A' && char <= 'Z')
 }
@@ -30,4 +32,23 @@ func IsBracket(char byte) bool {
 	}
 
 	return false
+}
+
+func GetBracketType(char byte) string {
+    switch char {
+    case '(':
+        return token.TokenOpenParen
+    case ')':
+        return token.TokenCloseParen
+    case '{':
+        return token.TokenOpenBrack
+    case '}':
+        return token.TokenCloseBrack
+    case '[':
+        return "OPEN_SQUARE_BRACK"
+    case ']':
+        return "CLOSE_SQUARE_BRACK"
+    }
+
+    return ""
 }
