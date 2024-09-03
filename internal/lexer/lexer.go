@@ -83,6 +83,10 @@ func (l *Lexer) nextLexeme() {
 }
 
 func (l *Lexer) readIdentifier() (*token.Token, error) {
+	if !utils.IsAlpha(l.peek()) {
+		return nil, fmt.Errorf("lexer.readIdentifier: Invalid lexeme, a identifier must start with a letter: %d", l.Cursor)
+	}
+
 	for l.Forward < len(l.Input) && (utils.IsAlpha(l.peekNextChar()) || utils.IsNum(l.peekNextChar())) {
 		l.advance()
 	}
@@ -97,14 +101,23 @@ func (l *Lexer) readIdentifier() (*token.Token, error) {
 }
 
 func (l *Lexer) readNum() (*token.Token, error) {
-	dotCounter := 0
-	for l.Forward < len(l.Input) && utils.IsNum(l.peekNextChar()) || l.peekNextChar() == '.' {
-		if l.Input[l.Forward] == '.' {
-			dotCounter++
+	seenDot := false
 
-			if dotCounter > 1 {
+	for l.Forward < len(l.Input) {
+		if l.peekNextChar() == '.' {
+			if seenDot {
 				return nil, errors.New("lexer.readNum: Number with more than one '.'")
 			}
+
+			seenDot = true 
+		}
+
+		if utils.IsAlpha(l.peekNextChar()) {
+			return nil, fmt.Errorf("lexer.readNum: Invalid lexeme, a number cannot be followed with a letter: %d", l.Cursor)
+		}
+
+		if !utils.IsNum(l.peekNextChar()) && l.peekNextChar() != '.' {
+			break
 		}
 
 		l.advance()
