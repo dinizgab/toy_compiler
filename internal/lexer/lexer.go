@@ -14,6 +14,14 @@ type Lexer struct {
 	Forward int
 }
 
+func New(input []byte) *Lexer {
+	return &Lexer{
+		Input:   string(input),
+		Cursor:  0,
+		Forward: 1,
+	}
+}
+
 func (l *Lexer) Lex() ([]*token.Token, error) {
 	tokens := make([]*token.Token, 0)
 

@@ -20,7 +20,7 @@ func main() {
 		log.Fatalf("Error reading file: %v", err)
 	}
 
-	lex := lexer.Lexer{Input: string(fileContent), Cursor: 0, Forward: 1}
+	lex := lexer.New(fileContent)
 	tokens, err := lex.Lex()
 	if err != nil {
 		log.Fatalf("Error lexing file: %v", err)
