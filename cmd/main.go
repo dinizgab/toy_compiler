@@ -2,11 +2,12 @@ package main
 
 import (
 	"flag"
-	"fmt"
 	"log"
 	"os"
 
 	"github.com/dinizgab/toy_compiler/internal/lexer"
+	"github.com/dinizgab/toy_compiler/internal/parser"
+	symboltable "github.com/dinizgab/toy_compiler/internal/symbol_table"
 )
 
 var filename string
@@ -26,7 +27,9 @@ func main() {
 		log.Fatalf("Error lexing file: %v", err)
 	}
 
-	for _, token := range tokens {
-		fmt.Println(token.String())
-	}
+
+	st := symboltable.New()
+	parser := parser.New(tokens, st)
+	
+	parser.ParseDescending()
 }
