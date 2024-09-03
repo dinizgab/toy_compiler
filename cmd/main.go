@@ -29,7 +29,7 @@ func main() {
 
 
 	st := symboltable.New()
-	parser := parser.New(tokens, st)
+	parser := parser.NewDescendingParser(tokens, st)
 	
-	parser.ParseDescending()
+	parser.Parse()
 }
