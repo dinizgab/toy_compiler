@@ -48,7 +48,9 @@ func (l *Lexer) Lex() ([]*token.Token, error) {
 			}
 			tokens = append(tokens, token)
 		case utils.IsBracket(char):
-			token, err := token.NewToken(string(char), string(char))
+			tokenType := utils.GetBracketType(char)
+
+			token, err := token.NewToken(tokenType, string(char))
 			if err != nil {
 				return nil, err
 			}
@@ -97,8 +99,9 @@ func (l *Lexer) readIdentifier() (*token.Token, error) {
 
 	lexeme := l.Input[l.Cursor:l.Forward]
 	// If lexeme is a keyword
-	if token.IsKeyword(lexeme) {
-		return token.NewToken(lexeme, lexeme)
+	// TODO - Create a function that create a new keyword token (now i have duplicated code in these params)
+	if value, ok := token.IsKeyword(lexeme); ok {
+		return token.NewToken(value, value)
 	}
 
 	return token.NewToken(token.TokenIdent, lexeme)
@@ -113,7 +116,7 @@ func (l *Lexer) readNum() (*token.Token, error) {
 				return nil, errors.New("lexer.readNum: Number with more than one '.'")
 			}
 
-			seenDot = true 
+			seenDot = true
 		}
 
 		if utils.IsAlpha(l.peekNextChar()) {
