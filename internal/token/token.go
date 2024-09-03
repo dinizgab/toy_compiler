@@ -39,11 +39,11 @@ type Token struct {
 	Value string
 }
 
-func NewToken(tokenType, value string) (*Token, error) {
+func NewToken(tokenType, value string) (*Token) {
 	return &Token{
 		Type:  tokenType,
 		Value: value,
-	}, nil
+	}
 }
 
 func (t *Token) String() string {

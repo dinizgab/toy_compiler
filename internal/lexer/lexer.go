@@ -50,10 +50,7 @@ func (l *Lexer) Lex() ([]*token.Token, error) {
 		case utils.IsBracket(char):
 			tokenType := utils.GetBracketType(char)
 
-			token, err := token.NewToken(tokenType, string(char))
-			if err != nil {
-				return nil, err
-			}
+			token := token.NewToken(tokenType, string(char))
 			tokens = append(tokens, token)
 		case char == 10 || char == 32:
 			// ignoring new lines and spaces
@@ -101,10 +98,10 @@ func (l *Lexer) readIdentifier() (*token.Token, error) {
 	// If lexeme is a keyword
 	// TODO - Create a function that create a new keyword token (now i have duplicated code in these params)
 	if value, ok := token.IsKeyword(lexeme); ok {
-		return token.NewToken(value, value)
+		return token.NewToken(value, value), nil
 	}
 
-	return token.NewToken(token.TokenIdent, lexeme)
+	return token.NewToken(token.TokenIdent, lexeme), nil
 }
 
 func (l *Lexer) readNum() (*token.Token, error) {
@@ -132,10 +129,7 @@ func (l *Lexer) readNum() (*token.Token, error) {
 
 	lexeme := l.Input[l.Cursor:l.Forward]
 
-	token, err := token.NewToken(token.TokenNumber, lexeme)
-	if err != nil {
-		return nil, err
-	}
+	token := token.NewToken(token.TokenNumber, lexeme)
 	return token, nil
 }
 
@@ -156,10 +150,6 @@ func (l *Lexer) readOperator() (*token.Token, error) {
 		tokenType = token.TokenArithmeticOperator
 	}
 
-	token, err := token.NewToken(tokenType, lexeme)
-	if err != nil {
-		return nil, err
-	}
-
+	token := token.NewToken(tokenType, lexeme)
 	return token, nil
 }

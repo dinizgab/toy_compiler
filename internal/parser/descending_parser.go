@@ -39,10 +39,8 @@ func (p *descendingParserImpl) Parse() error {
 func (p *descendingParserImpl) parseFunctionDefinition() error {
 	const entityName = "descendingParserImpl.parseFunctionDefinition"
 
-
     // TODO - put the error to return inside the match function
 	if !p.Match(token.TokenFn) {
-		return fmt.Errorf("%s: Expected 'fn' keyword, found: %s", entityName, p.Lookahead.Value)
 	}
 
 	if !p.Match(token.TokenIdent) {

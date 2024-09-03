@@ -7,9 +7,8 @@ import (
 )
 
 func TestNewToken(t *testing.T) {
-	token, err := NewToken(TokenIdent, "test")
+	token := NewToken(TokenIdent, "test")
 
-	assert.Nil(t, err)
 	assert.Equal(t, token.Type, TokenIdent)
 	assert.Equal(t, token.Value, "test")
 }
