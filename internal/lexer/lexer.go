@@ -107,7 +107,7 @@ func (l *Lexer) readNum() (*token.Token, error) {
 			}
 		}
 
-		l.Forward++
+		l.advance()
 	}
 
 	lexeme := l.Input[l.Cursor:l.Forward]
@@ -121,7 +121,7 @@ func (l *Lexer) readNum() (*token.Token, error) {
 
 func (l *Lexer) readOperator() (*token.Token, error) {
 	if utils.IsOperator(l.peekNextChar()) {
-		l.Forward++
+		l.advance()
 	}
 
 	var tokenType string
