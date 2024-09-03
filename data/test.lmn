@@ -1,0 +1,12 @@
+fn foo() {
+    if (test <= 1 || 4 <= 3) {
+        a = 3
+        return 1.2
+    } else {
+        return 2
+    }
+}
+
+fn foo324() {
+    a n 3
+}

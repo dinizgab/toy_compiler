@@ -1,21 +1,29 @@
 package main
 
 import (
+	"flag"
 	"fmt"
+	"log"
+	"os"
 
 	"github.com/dinizgab/toy_compiler/internal/lexer"
 )
 
-const (
-	testString = "fn foo() {\n if (test <= 1 || 4 <= 3) {\na = 3\nreturn 1.2\n} else {\n return 2\n}\n }\n fn foo342() { a n 3 }"
-	testString2 = "()"
-)
+var filename string
 
 func main() {
-	lex := lexer.Lexer{Input: testString, Cursor: 0, Forward: 1}
+	flag.StringVar(&filename, "filename", "test.toy", "The path to the file to be compiled")
+	flag.Parse()
+
+	fileContent, err := os.ReadFile(filename)
+	if err != nil {
+		log.Fatalf("Error reading file: %v", err)
+	}
+
+	lex := lexer.Lexer{Input: string(fileContent), Cursor: 0, Forward: 1}
 	tokens, err := lex.Lex()
 	if err != nil {
-		fmt.Println(err)
+		log.Fatalf("Error lexing file: %v", err)
 	}
 
 	for _, token := range tokens {
