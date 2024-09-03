@@ -8,7 +8,6 @@ import (
 	"github.com/dinizgab/toy_compiler/internal/utils"
 )
 
-
 type Lexer struct {
 	Input   string
 	Cursor  int
@@ -22,34 +21,34 @@ func (l *Lexer) Lex() ([]*token.Token, error) {
 		char := l.peek()
 
 		switch {
-			case utils.IsAlpha(char):
-				token, err := l.readIdentifier()
-				if err != nil {
-					return nil, err
-				}
-				tokens = append(tokens, token)
-			case utils.IsNum(char):
-				token, err := l.readNum()
-				if err != nil {
-					return nil, err
-				}
-				tokens = append(tokens, token)
-			case utils.IsOperator(char):
-				token, err := l.readOperator()
-				if err != nil {
-					return nil, err
-				}
-				tokens = append(tokens, token)
-			case utils.IsBracket(char):
-				token, err := token.NewToken(string(char), string(char))
-				if err != nil {
-					return nil, err
-				}
-				tokens = append(tokens, token)
-			case char == 10 || char == 32:
-				// ignoring new lines and spaces
-			default:
-				return nil, fmt.Errorf("lexer.Lex: Invalid character: %s", string(char))
+		case utils.IsNum(char):
+			token, err := l.readNum()
+			if err != nil {
+				return nil, err
+			}
+			tokens = append(tokens, token)
+		case utils.IsAlpha(char):
+			token, err := l.readIdentifier()
+			if err != nil {
+				return nil, err
+			}
+			tokens = append(tokens, token)
+		case utils.IsOperator(char):
+			token, err := l.readOperator()
+			if err != nil {
+				return nil, err
+			}
+			tokens = append(tokens, token)
+		case utils.IsBracket(char):
+			token, err := token.NewToken(string(char), string(char))
+			if err != nil {
+				return nil, err
+			}
+			tokens = append(tokens, token)
+		case char == 10 || char == 32:
+			// ignoring new lines and spaces
+		default:
+			return nil, fmt.Errorf("lexer.Lex: Invalid character: %s", string(char))
 		}
 
 		l.nextLexeme()
@@ -63,7 +62,11 @@ func (l *Lexer) peek() byte {
 }
 
 func (l *Lexer) peekNextChar() byte {
-	return l.Input[l.Cursor+1]
+	return l.Input[l.Forward]
+}
+
+func (l *Lexer) advance() {
+	l.Forward++
 }
 
 func (l *Lexer) nextLexeme() {
@@ -71,10 +74,9 @@ func (l *Lexer) nextLexeme() {
 	l.Forward += 1
 }
 
-
 func (l *Lexer) readIdentifier() (*token.Token, error) {
-	for l.Forward < len(l.Input) && (utils.IsAlpha(l.Input[l.Forward]) || utils.IsNum(l.Input[l.Forward])) {
-		l.Forward++
+	for l.Forward < len(l.Input) && (utils.IsAlpha(l.peekNextChar()) || utils.IsNum(l.peekNextChar())) {
+		l.advance()
 	}
 
 	lexeme := l.Input[l.Cursor:l.Forward]
@@ -88,7 +90,7 @@ func (l *Lexer) readIdentifier() (*token.Token, error) {
 
 func (l *Lexer) readNum() (*token.Token, error) {
 	dotCounter := 0
-	for l.Forward < len(l.Input) && utils.IsNum(l.Input[l.Forward]) || l.Input[l.Forward] == '.' {
+	for l.Forward < len(l.Input) && utils.IsNum(l.peekNextChar()) || l.peekNextChar() == '.' {
 		if l.Input[l.Forward] == '.' {
 			dotCounter++
 
