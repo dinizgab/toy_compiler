@@ -70,6 +70,10 @@ func (l *Lexer) peek() byte {
 }
 
 func (l *Lexer) peekNextChar() byte {
+	if l.Forward >= len(l.Input) {
+		return 0
+	}
+
 	return l.Input[l.Forward]
 }
 
