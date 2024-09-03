@@ -31,11 +31,6 @@ var tokens = map[string]string{
     ")":                  TokenCloseParen,
     "{":                  TokenOpenBrack,
     "}":                  TokenCloseBrack,
-    "id":                 TokenIdent,
-    "number":             TokenNumber,
-    "logicalOperator":    TokenLogicalOperator,
-    "arithmeticOperator": TokenArithmeticOperator,
-    "assign":             TokenAssign,
 }
 
 type Token struct {
@@ -44,11 +39,6 @@ type Token struct {
 }
 
 func NewToken(tokenType, value string) (*Token, error) {
-	tokenType, exists := tokens[tokenType]
-	if !exists {
-        return nil, fmt.Errorf("unknown token type: %s", tokenType)
-	}
-
 	return &Token{
 		Type:  tokenType,
 		Value: value,
@@ -57,4 +47,10 @@ func NewToken(tokenType, value string) (*Token, error) {
 
 func (t *Token) String() string {
 	return fmt.Sprintf("<%s : %s>", t.Type, t.Value)
+}
+
+func IsKeyword(lexeme string) bool {
+    _, ok := tokens[lexeme]
+
+    return ok
 }
