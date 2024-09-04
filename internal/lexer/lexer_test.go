@@ -54,7 +54,7 @@ func TestReadOperatorArithmetic(t *testing.T) {
 
 	assert.NoError(t, err)
 	assert.Equal(t, 1, len(tokens))
-	assert.Equal(t, token.TokenArithmeticOperator, tokens[0].Type)
+	assert.Equal(t, token.TokenAdditionOperator, tokens[0].Type)
 	assert.Equal(t, "+", tokens[0].Value)
 }
 
