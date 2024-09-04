@@ -17,7 +17,10 @@ const (
 	TokenIdent              = "IDENT"
 	TokenNumber             = "NUMBER"
 	TokenLogicalOperator    = "LOG_OPERATOR"
-	TokenArithmeticOperator = "ARITH_OPERATOR"
+    TokenAdditionOperator   = "ADD_OPERATOR"
+    TokenSubtractionOperator = "SUB_OPERATOR"
+    TokenMultiplicationOperator = "MUL_OPERATOR"
+    TokenDivisionOperator   = "DIV_OPERATOR"
 	TokenAssign             = "ASSIGN"
 	TokenEOF                = "EOF"
 )

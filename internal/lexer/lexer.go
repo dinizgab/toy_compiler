@@ -146,8 +146,16 @@ func (l *Lexer) readOperator() (*token.Token, error) {
 		tokenType = token.TokenLogicalOperator
 	case "=":
 		tokenType = token.TokenAssign
+    case "+":
+        tokenType = token.TokenAdditionOperator
+    case "-":
+        tokenType = token.TokenSubtractionOperator
+    case "*":
+        tokenType = token.TokenMultiplicationOperator
+    case "/":
+        tokenType = token.TokenDivisionOperator
 	default:
-		tokenType = token.TokenArithmeticOperator
+        return nil, fmt.Errorf("lexer.readOperator: Invalid operator: %s", lexeme)
 	}
 
 	token := token.NewToken(tokenType, lexeme)
