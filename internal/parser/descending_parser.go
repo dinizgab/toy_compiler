@@ -44,7 +44,6 @@ func (p *descendingParserImpl) Parse() error {
 }
 
 func (p *descendingParserImpl) parseFunctionDefinition() error {
-    fmt.Println(p.Lookahead.Value)
     if err := p.Match(token.TokenFn); err != nil {
         return err
 	}
@@ -119,7 +118,10 @@ func (p *descendingParserImpl) parseTerm() error {
     }
 
     for p.Lookahead.Type == token.TokenMultiplicationOperator || p.Lookahead.Type == token.TokenDivisionOperator {
-        p.Match(p.Lookahead.Type)
+        if err := p.Match(p.Lookahead.Type); err != nil {
+            return err
+        }
+
         if err := p.parseFactor(); err != nil {
             return err
         }
@@ -143,7 +145,10 @@ func (p *descendingParserImpl) parseFactor() error {
             return err
         }
 
-        p.parseExpression()
+        err = p.parseExpression()
+        if err != nil {
+            return err
+        }
 
         err = p.Match(token.TokenCloseParen)
         if err != nil {
@@ -160,7 +165,12 @@ func (p *descendingParserImpl) parseFactor() error {
 func (p *descendingParserImpl) Match(t string) error {
     const entityName = "descendingParserImpl.Match"
 
+    if p.Lookahead == nil {
+        return fmt.Errorf("%s: Unexpected EOF", entityName)
+    }
+
 	if p.Lookahead != nil && p.Lookahead.Type == t {
+        // TODO - Check if this entry already exists in the symbolTable
 		if p.Lookahead.Type == token.TokenIdent {
 			p.handleSymbolTableAddition()
 		}
