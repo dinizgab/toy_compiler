@@ -41,6 +41,7 @@ func (p *descendingParserImpl) parseFunctionDefinition() error {
 
     // TODO - put the error to return inside the match function
 	if !p.Match(token.TokenFn) {
+		return fmt.Errorf("%s: Expected 'fn', found: %s", entityName, p.Lookahead.Value)
 	}
 
 	if !p.Match(token.TokenIdent) {
@@ -66,6 +67,32 @@ func (p *descendingParserImpl) parseFunctionDefinition() error {
 	}
 
 	return nil
+}
+
+func (p *descendingParserImpl) parseAssign() error {
+    const entityName = "descendingParserImpl.parseAssign"
+
+    if !p.Match(token.TokenIdent) {
+        return fmt.Errorf("%s: Expected identifier, found: %s", entityName, p.Lookahead.Value)
+    }
+
+    if !p.Match(token.TokenAssign) {
+        return fmt.Errorf("%s: Expected '=', found: %s", entityName, p.Lookahead.Value)
+    }
+    
+    err := p.parseExpression()
+    if err != nil {
+        return fmt.Errorf("%s: %s", entityName, err)
+    }
+
+    return nil
+}
+
+func (p *descendingParserImpl) parseExpression() error {
+    const entityName = "descendingParserImpl.parseExpression"
+
+
+    return nil
 }
 
 func (p *descendingParserImpl) Match(t string) bool {
