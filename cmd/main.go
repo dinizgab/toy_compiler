@@ -30,7 +30,10 @@ func main() {
 
 	st := symboltable.New()
 	parser := parser.NewDescendingParser(tokens, st)
-	parser.Parse()
+    err = parser.Parse()
+    if err != nil {
+        log.Fatalf("Error parsing file: %v", err)
+    }
 
     fmt.Println("Symbol Table:")
     for k, v := range st {
