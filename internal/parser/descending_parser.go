@@ -33,13 +33,20 @@ func (p *descendingParserImpl) NextPosition() {
 }
 
 func (p *descendingParserImpl) Parse() error {
-	return p.parseFunctionDefinition()
+	switch p.Lookahead.Type {
+	case token.TokenFn:
+		return p.parseFunctionDefinition()
+	case token.TokenIdent:
+		return p.parseExpression()
+	default:
+		return fmt.Errorf("descendingParserImpl.Parse: Unexpected token: %s", p.Lookahead.Value)
+	}
 }
 
 func (p *descendingParserImpl) parseFunctionDefinition() error {
 	const entityName = "descendingParserImpl.parseFunctionDefinition"
 
-    // TODO - put the error to return inside the match function
+	// TODO - put the error to return inside the match function
 	if !p.Match(token.TokenFn) {
 		return fmt.Errorf("%s: Expected 'fn', found: %s", entityName, p.Lookahead.Value)
 	}
@@ -69,31 +76,77 @@ func (p *descendingParserImpl) parseFunctionDefinition() error {
 	return nil
 }
 
-func (p *descendingParserImpl) parseAssign() error {
-    const entityName = "descendingParserImpl.parseAssign"
-
-    if !p.Match(token.TokenIdent) {
-        return fmt.Errorf("%s: Expected identifier, found: %s", entityName, p.Lookahead.Value)
-    }
-
-    if !p.Match(token.TokenAssign) {
-        return fmt.Errorf("%s: Expected '=', found: %s", entityName, p.Lookahead.Value)
-    }
-    
-    err := p.parseExpression()
-    if err != nil {
-        return fmt.Errorf("%s: %s", entityName, err)
-    }
-
+func (p *descendingParserImpl) parseStatements() error {
     return nil
+}
+
+func (p *descendingParserImpl) parseAssign() error {
+	const entityName = "descendingParserImpl.parseAssign"
+
+	if !p.Match(token.TokenIdent) {
+		return fmt.Errorf("%s: Expected identifier, found: %s", entityName, p.Lookahead.Value)
+	}
+
+	if !p.Match(token.TokenAssign) {
+		return fmt.Errorf("%s: Expected '=', found: %s", entityName, p.Lookahead.Value)
+	}
+
+	err := p.parseExpression()
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (p *descendingParserImpl) parseExpression() error {
-    const entityName = "descendingParserImpl.parseExpression"
+    if err := p.parseTerm(); err != nil {
+        return err
+    }
 
+    for p.Lookahead.Type == token.TokenAdditionOperator || p.Lookahead.Type == token.TokenSubtractionOperator {
+        p.Match(p.Lookahead.Type)
+
+        if err := p.parseTerm(); err != nil {
+            return err
+        }
+    }
+
+	return nil
+}
+
+func (p *descendingParserImpl) parseTerm() error {
+    if err := p.parseFactor(); err != nil { 
+        return err
+    }
+
+    for p.Lookahead.Type == token.TokenMultiplicationOperator || p.Lookahead.Type == token.TokenDivisionOperator {
+        p.Match(p.Lookahead.Type)
+        if err := p.parseFactor(); err != nil {
+            return err
+        }
+    }
 
     return nil
 }
+
+func (p *descendingParserImpl) parseFactor() error {
+    const entityName = "descendingParserImpl.parseFactor"
+    if p.Lookahead.Type == token.TokenIdent || p.Lookahead.Type == token.TokenNumber {
+        p.Match(p.Lookahead.Type)
+
+        return nil
+    } else if p.Lookahead.Type == token.TokenOpenParen {
+        p.Match(token.TokenOpenParen)
+        p.parseExpression()
+        p.Match(token.TokenCloseParen)
+    } else {
+        return fmt.Errorf("%s: Unexpected token type: %s", entityName, p.Lookahead.Value)
+    }
+
+    return nil
+}
+
 
 func (p *descendingParserImpl) Match(t string) bool {
 	if p.Lookahead != nil && p.Lookahead.Type == t {
