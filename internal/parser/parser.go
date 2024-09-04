@@ -5,5 +5,5 @@ import (
 
 type Parser interface {
 	Parse() error
-    Match(t string) bool
+    Match(t string) error 
 }

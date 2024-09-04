@@ -44,33 +44,31 @@ func (p *descendingParserImpl) Parse() error {
 }
 
 func (p *descendingParserImpl) parseFunctionDefinition() error {
-	const entityName = "descendingParserImpl.parseFunctionDefinition"
-
-	// TODO - put the error to return inside the match function
-	if !p.Match(token.TokenFn) {
-		return fmt.Errorf("%s: Expected 'fn', found: %s", entityName, p.Lookahead.Value)
+    fmt.Println(p.Lookahead.Value)
+    if err := p.Match(token.TokenFn); err != nil {
+        return err
 	}
 
-	if !p.Match(token.TokenIdent) {
-		return fmt.Errorf("%s: Expected function name, found: %s", entityName, p.Lookahead.Value)
+    if err := p.Match(token.TokenIdent); err != nil {
+		return err
 	}
 
-	if !p.Match(token.TokenOpenParen) {
-		return fmt.Errorf("%s: Expected '(', found: %s", entityName, p.Lookahead.Value)
+    if err := p.Match(token.TokenOpenParen); err != nil {
+        return err
 	}
 
-	if !p.Match(token.TokenCloseParen) {
-		return fmt.Errorf("%s: Expected ')', found: %s", entityName, p.Lookahead.Value)
+    if err := p.Match(token.TokenCloseParen); err != nil {
+        return err
 	}
 
-	if !p.Match(token.TokenOpenBrack) {
-		return fmt.Errorf("%s: Expected '{', found: %s", entityName, p.Lookahead.Value)
+    if err := p.Match(token.TokenOpenBrack); err != nil {
+        return err
 	}
 
 	// TODO - Parse function body
 
-	if !p.Match(token.TokenCloseBrack) {
-		return fmt.Errorf("%s: Expected '}', found: %s", entityName, p.Lookahead.Value)
+    if err := p.Match(token.TokenCloseBrack); err != nil {
+        return err
 	}
 
 	return nil
@@ -81,14 +79,12 @@ func (p *descendingParserImpl) parseStatements() error {
 }
 
 func (p *descendingParserImpl) parseAssign() error {
-	const entityName = "descendingParserImpl.parseAssign"
-
-	if !p.Match(token.TokenIdent) {
-		return fmt.Errorf("%s: Expected identifier, found: %s", entityName, p.Lookahead.Value)
+    if err := p.Match(token.TokenIdent); err != nil {
+		return err
 	}
 
-	if !p.Match(token.TokenAssign) {
-		return fmt.Errorf("%s: Expected '=', found: %s", entityName, p.Lookahead.Value)
+    if err := p.Match(token.TokenAssign); err != nil {
+		return err
 	}
 
 	err := p.parseExpression()
@@ -105,7 +101,9 @@ func (p *descendingParserImpl) parseExpression() error {
     }
 
     for p.Lookahead.Type == token.TokenAdditionOperator || p.Lookahead.Type == token.TokenSubtractionOperator {
-        p.Match(p.Lookahead.Type)
+        if err := p.Match(p.Lookahead.Type); err != nil {
+            return err
+        }
 
         if err := p.parseTerm(); err != nil {
             return err
@@ -133,13 +131,24 @@ func (p *descendingParserImpl) parseTerm() error {
 func (p *descendingParserImpl) parseFactor() error {
     const entityName = "descendingParserImpl.parseFactor"
     if p.Lookahead.Type == token.TokenIdent || p.Lookahead.Type == token.TokenNumber {
-        p.Match(p.Lookahead.Type)
+        err := p.Match(p.Lookahead.Type)
+        if err != nil {
+            return err
+        }
 
         return nil
     } else if p.Lookahead.Type == token.TokenOpenParen {
-        p.Match(token.TokenOpenParen)
+        err := p.Match(token.TokenOpenParen)
+        if err != nil {
+            return err
+        }
+
         p.parseExpression()
-        p.Match(token.TokenCloseParen)
+
+        err = p.Match(token.TokenCloseParen)
+        if err != nil {
+            return err
+        }
     } else {
         return fmt.Errorf("%s: Unexpected token type: %s", entityName, p.Lookahead.Value)
     }
@@ -148,17 +157,20 @@ func (p *descendingParserImpl) parseFactor() error {
 }
 
 
-func (p *descendingParserImpl) Match(t string) bool {
+func (p *descendingParserImpl) Match(t string) error {
+    const entityName = "descendingParserImpl.Match"
+
 	if p.Lookahead != nil && p.Lookahead.Type == t {
 		if p.Lookahead.Type == token.TokenIdent {
 			p.handleSymbolTableAddition()
 		}
 
 		p.NextPosition()
-		return true
+		return nil 
 	}
 
-	return false
+    tokenName := token.LiteralNameFromType(t)
+    return fmt.Errorf("%s: Expected %s, found: %s", entityName, tokenName, p.Lookahead.Value) 
 }
 
 func (p *descendingParserImpl) handleSymbolTableAddition() {
