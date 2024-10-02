@@ -23,6 +23,7 @@ const (
 	TokenDivisionOperator       = "DIV_OPERATOR"
 	TokenAssign                 = "ASSIGN"
 	TokenEOF                    = "EOF"
+	TokenColon                  = "COLON"
 )
 
 var tokens = map[string]string{
@@ -81,9 +82,9 @@ func IsKeyword(lexeme string) (string, bool) {
 }
 
 func LiteralNameFromType(tokenType string) string {
-    if literal, exists := tokenLiteralMap[tokenType]; exists {
-        return literal
-    }
+	if literal, exists := tokenLiteralMap[tokenType]; exists {
+		return literal
+	}
 
-    return "unknown"
+	return "unknown"
 }
